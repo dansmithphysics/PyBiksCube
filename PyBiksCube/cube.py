@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 from PyBiksCube.utilities import side_type_converter
-from PyBiksCube.piece import Piece
+from PyBiksCube import Piece
 
 
 class Cube:

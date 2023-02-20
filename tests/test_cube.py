@@ -1,5 +1,5 @@
 import pytest
-from PyBiksCube.cube import Cube
+from PyBiksCube import Cube
 
 @pytest.mark.parametrize("move_command, expected_state",
                          [("  ", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),

@@ -1,5 +1,5 @@
 import pytest
-from PyBiksCube.piece import Piece
+from PyBiksCube import Piece
 
 
 @pytest.mark.parametrize("initial_face, turn_face, arrive_face, number_of_turns, expected_color",
