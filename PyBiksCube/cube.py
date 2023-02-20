@@ -9,7 +9,7 @@ from matplotlib.patches import Rectangle, Circle, PathPatch
 import mpl_toolkits.mplot3d.art3d as art3d
 
 def side_type_converter(side, reverse=False):
-    ''' Going to stick with FBRLUD notation. '''
+    ''' Going to stick with UFDLRB notation. '''
 
     if isinstance(side, list):
         return [side_type_converter(side_, reverse) for side_ in side]
@@ -26,7 +26,7 @@ def side_type_converter(side, reverse=False):
             else:
                 return side_map[side]
     else:        
-        if side in 'FBRLUD':
+        if side in 'UFDLRB':
             return side
         else:
             side_map = {'x': 'F', '-x': 'B',                    
@@ -80,7 +80,7 @@ class Piece:
         elif converted_side == 'D':
             return 4
         else:
-            raise ValueError("side does not follow FBRLUD notation")
+            raise ValueError("side does not follow UFDLRB notation")
     
     def rotate(self, turn_axis, number_of_turns):        
         converted_turn_axis = side_type_converter(turn_axis)
@@ -145,16 +145,72 @@ class Cube:
             self.set_color_face('U', 'r')
             self.set_color_face('D', 'm') # no orange, so m it is!
 
-
+    def cube_state_index_map(self, cube_state_index):        
+        ''' want to output the face direction and 3d index of number '''
+        map_ = {0: [(0, 0, 2), 'U'],            
+                1: [(0, 1, 2), 'U'],
+                2: [(0, 2, 2), 'U'],
+                3: [(1, 0, 2), 'U'],
+                4: [(1, 1, 2), 'U'],
+                5: [(1, 2, 2), 'U'],
+                6: [(2, 0, 2), 'U'],
+                7: [(2, 1, 2), 'U'],
+                8: [(2, 2, 2), 'U'],
+                9: [(2, 0, 2), 'F'],
+                10: [(2, 1, 2), 'F'],
+                11: [(2, 2, 2), 'F'],
+                12: [(2, 0, 1), 'F'],
+                13: [(2, 1, 1), 'F'],
+                14: [(2, 2, 1), 'F'],
+                15: [(2, 0, 0), 'F'],
+                16: [(2, 1, 0), 'F'],
+                17: [(2, 2, 0), 'F'],
+                18: [(2, 0, 0), 'D'],
+                19: [(2, 1, 0), 'D'],
+                20: [(2, 2, 0), 'D'],
+                21: [(1, 0, 0), 'D'],
+                22: [(1, 1, 0), 'D'],
+                23: [(1, 2, 0), 'D'],
+                24: [(0, 0, 0), 'D'],
+                25: [(0, 1, 0), 'D'],
+                26: [(0, 2, 0), 'D'],
+                27: [(0, 0, 2), 'L'],
+                28: [(1, 0, 2), 'L'],
+                29: [(2, 0, 2), 'L'],
+                30: [(0, 0, 1), 'L'],
+                31: [(1, 0, 1), 'L'],
+                32: [(2, 0, 1), 'L'],
+                33: [(0, 0, 0), 'L'],
+                34: [(1, 0, 0), 'L'],
+                35: [(2, 0, 0), 'L'],
+                36: [(2, 2, 2), 'R'],
+                37: [(1, 2, 2), 'R'],
+                38: [(0, 2, 2), 'R'],
+                39: [(2, 2, 1), 'R'],
+                40: [(1, 2, 1), 'R'],
+                41: [(0, 2, 1), 'R'],
+                42: [(2, 2, 0), 'R'],
+                43: [(1, 2, 0), 'R'],
+                44: [(0, 2, 0), 'R'],
+                45: [(0, 2, 2), 'B'],
+                46: [(0, 1, 2), 'B'],
+                47: [(0, 0, 2), 'B'],
+                48: [(0, 2, 1), 'B'],
+                49: [(0, 1, 1), 'B'],
+                50: [(0, 0, 1), 'B'],
+                51: [(0, 2, 0), 'B'],
+                52: [(0, 1, 0), 'B'],
+                53: [(0, 0, 0), 'B']}
+        return map_[cube_state_index]
+            
     def load_cube_state(self, cube_state):
         if len(cube_state) != 54:
             return ValueError("Cube state must be a 54-long list of chars or string of colors")
-        # first 9 are front
-        face_order = list("FBRLUD")
-        for color, face in zip(cube_state, np.repeat(face_order, 9)):
-            print(color, face)
-            for i_position in self.face_map[face]:
-                self.pieces[i_position].set_color(face, color)
+
+        face_order = list("UFDLRB")
+        for i_color, color in enumerate(cube_state):
+            i_position, face = self.cube_state_index_map(i_color)
+            self.pieces[i_position].set_color(face, color)
 
         
     def set_color_face(self, face, color):
@@ -172,7 +228,7 @@ class Cube:
 
         return colors_flat
             
-    def plot_face(self, face):
+    def print_face(self, face):
         converted_face = side_type_converter(face)
         print(face, end=" ")
         for i_position in self.face_map[converted_face]:
@@ -184,7 +240,7 @@ class Cube:
         
     def move(self, move_command):
         # first, sanitize the move face
-        # only accepts FBRLUD notation.
+        # only accepts UFDLRB notation.
         # if there is a prime, that means reverse
         
         if not isinstance(move_command, str):
@@ -200,8 +256,8 @@ class Cube:
         else:
             raise ValueError("Move command should be a two character command")
 
-        if move_command[0] not in 'FBRLUD':
-            raise ValueError("Move command should follow FBRLUD notation")
+        if move_command[0] not in 'UFDLRB':
+            raise ValueError("Move command should follow UFDLRB notation")
 
         direction = 1
         if move_command[1] == "'":
@@ -209,7 +265,7 @@ class Cube:
         move_command = move_command[0]
 
         # The logic to do the shuffle ... not so easy!
-        slice_of_pieces = np.array([self.pieces[i_position] for i_position in self.face_map[move_command]], dtype=object)
+        slice_of_pieces = np.array([self.pieces[i_position] for i_position in self.face_map[move_command]], dtype=object)        
         slice_of_pieces = slice_of_pieces.reshape((3, 3))
         slice_of_pieces = np.rot90(slice_of_pieces, -direction)
         for i_flattened, i_position in enumerate(self.face_map[move_command]):
@@ -265,14 +321,13 @@ class Cube:
             
 if __name__ == "__main__":
 
-
-    #"FBRLUD"
+    # UFDLRB
 
     cube_state = np.repeat(list("wygbrm"), 9)
 
     print(cube_state)
     
-    cube = Cube(cube_state)    
+    cube = Cube(cube_state)
     
     #cube.plot()
     #plt.title("Before move")
