@@ -1,111 +1,12 @@
 import numpy as np
-import pandas as pd
-from itertools import product, combinations
-from operator import itemgetter
+from itertools import product
 
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
-from matplotlib.patches import Rectangle, Circle, PathPatch
-import mpl_toolkits.mplot3d.art3d as art3d
+from matplotlib.patches import Rectangle
 
-def side_type_converter(side, reverse=False):
-    ''' Going to stick with UFDLRB notation. '''
+from PyBiksCube.utilities import side_type_converter
+from PyBiksCube.piece import Piece
 
-    if isinstance(side, list):
-        return [side_type_converter(side_, reverse) for side_ in side]
-    
-    if reverse:
-        if side in 'xyz':
-            return side
-        else:
-            side_map = {'F': 'x', 'B':'-x',
-                        'R': 'y', 'L':'-y',
-                        'U': 'z', 'D':'-z'}
-            if side not in side_map:
-                raise ValueError
-            else:
-                return side_map[side]
-    else:        
-        if side in 'UFDLRB':
-            return side
-        else:
-            side_map = {'x': 'F', '-x': 'B',                    
-                        'y': 'R', '-y': 'L',                    
-                        'z': 'U', '-z': 'D'}
-            if side not in side_map:
-                raise ValueError
-            else:
-                return side_map[side]
-    
-class Piece:    
-    def __init__(self):
-        self.colors = np.array(['k', 'k', 'k', 'k', 'k', 'k'])
-
-        # The sides that are rotated when a turn is initiated on given face key
-        self.turn_sequences = {'F': ['U', 'R', 'D', 'L'],
-                               'B': ['U', 'L', 'D', 'R'],
-                               'R': ['U', 'B', 'D', 'F'],
-                               'L': ['U', 'F', 'D', 'B'],
-                               'U': ['F', 'L', 'B', 'R'],
-                               'D': ['F', 'R', 'B', 'L']}
-
-        self.side_to_index_map = {'F': 0,
-                                  'B': 2,
-                                  'R': 1,
-                                  'L': 3,
-                                  'U': 5,
-                                  'D': 4}
-        
-    def __str__(self):
-        return "|" + " ".join(self.colors) + "|"
-
-    def __repr__(self):
-        return "|" + " ".join(self.colors) + "|"
-    
-    def side_to_index(self, side):        
-        ''' Defines the, perhaps strange, coordinate system'''
-        converted_side = side_type_converter(side)
-
-        if isinstance(converted_side, list):
-            return [self.side_to_index(side_) for side_ in converted_side]
-
-        if converted_side not in self.side_to_index_map:
-            raise ValueError("side does not follow UFDLRB notation")
-        else:
-            return self.side_to_index_map[converted_side]            
-    
-    def rotate(self, turn_axis, number_of_turns):        
-        converted_turn_axis = side_type_converter(turn_axis)
-        current_turn = self.turn_sequences[converted_turn_axis]
-        sides_to_roll = self.side_to_index(current_turn)
-        self.colors[sides_to_roll] = self.colors[np.roll(sides_to_roll, number_of_turns)]
-
-    def get_color(self, side):
-        converted_side = side_type_converter(side)
-        return self.colors[self.side_to_index(converted_side)]
-        
-    def set_color(self, side, color):
-        converted_side = side_type_converter(side)
-        self.colors[self.side_to_index(converted_side)] = color
-    
-    def plot(self):
-        fig = plt.figure()
-        ax = fig.add_subplot(projection='3d')
-        ax.set_aspect("equal")
-        ax.set_autoscale_on(True)
-
-        r = [-10, 10]
-        ax.set_xlim(r)
-        ax.set_ylim(r)
-        ax.set_zlim(r)
-        ax.set_xlabel("x")
-        ax.set_ylabel("y")
-        ax.set_zlabel("z")
-        coord_system = [[2, 'x'], [2, 'y'], [-2, 'x'], [-2, 'y'], [-2, 'z'], [2, 'z']]
-        for i, (z, zdir) in enumerate(coord_system):
-            side = Rectangle((-2, -2), 4, 4, facecolor=self.colors[i])
-            ax.add_patch(side)
-            art3d.pathpatch_2d_to_3d(side, z=z, zdir=zdir)    
 
 class Cube:
     def __init__(self, cube_state=None, randomize=False):
@@ -119,8 +20,8 @@ class Cube:
                                   "F": [(2, i, j) for i, j in product(range(3), repeat=2)],
                                   "B": [(0, i, j) for i, j in product(range(3), repeat=2)],
                                   "L": [(i, 0, j) for i, j in product(range(3), repeat=2)],
-                                  "R": [(i, 2, j) for i, j in product(range(3), repeat=2)]}
-
+                                  "R": [(i, 2, j) for i, j in product(range(3), repeat=2)]}        
+        
         self.cube_state_map = {0: [(0, 0, 2), 'U'], 1: [(0, 1, 2), 'U'], 2: [(0, 2, 2), 'U'],
                                3: [(1, 0, 2), 'U'], 4: [(1, 1, 2), 'U'], 5: [(1, 2, 2), 'U'],
                                6: [(2, 0, 2), 'U'], 7: [(2, 1, 2), 'U'], 8: [(2, 2, 2), 'U'],
@@ -215,7 +116,38 @@ class Cube:
             if len(np.unique(self.get_face_colors(face))) != 1:
                 return False
         return True
+
+    def move_decoder(self, move_command):
+        ''' 
+        There are many moves on the cube which
+        can be constructed out of the fundamental moves:
+        "", "U", "F", "D", "L", "R", "B", "U'", "F'", "D'", "L'", "R'", "B'"
+        '''
+
+        if isinstance(move_command, list):
+            for move_command_ in move_command:
+                self.move_decoder(move_command)
         
+        if not isinstance(move_command, str):
+            raise ValueError("Move command should be a string")
+        move_command = move_command.strip()
+        
+        fundamental_moves = ["", "U", "F", "D", "L", "R", "B", "U'", "F'", "D'", "L'", "R'", "B'"]
+        double_moves = ["U2", "D2", "R2", "L2", "F2", "B2"]
+        #wide_moves = ["u", "d", "r", "l", "f", "b"]
+        #coordinate_moves = ['x', 'y', 'z']
+        
+        valid_moves = fundamental_moves + double_moves
+        if move_command not in valid_moves:
+            raise ValueError("Not a valid move_command: %s" % move_command)
+        
+        if move_command in fundamental_moves:
+            self.fundamental_move(move_command)
+        elif move_command in double_moves:
+            single_move = move_command[0]
+            self.fundamental_move(single_move)
+            self.fundamental_move(single_move)
+    
     def fundamental_move(self, move_command):
         # first, sanitize the move face
         # only accepts UFDLRB notation.
@@ -305,14 +237,8 @@ class Cube:
             
 if __name__ == "__main__":
 
-    # UFDLRB
-
-    cube_state = np.repeat(list("rymgbw"), 9)
-    print(''.join(cube_state))
-    
+    # UFDLRB    
     cube = Cube()
-    #cube.fundamental_move("U")
-    cube.randomize(2)
+    cube.move_decoder("U2")
     cube.plot()
-    plt.title("After move")
     plt.show()
