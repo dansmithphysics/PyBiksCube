@@ -25,6 +25,7 @@ def test_single_fundamental_move(move_command, expected_state):
     # Assert
     assert cube.get_cube_state() == expected_state
 
+
 @pytest.mark.parametrize("move_command_1, move_command_2, expected_state",
                          [("  ", "  ", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
                           ("U ", "U'", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
@@ -32,7 +33,8 @@ def test_single_fundamental_move(move_command, expected_state):
                           ("R ", "R'", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
                           ("L ", "L'", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
                           ("D ", "D'", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
-                          ("B ", "B'", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww")])
+                          ("B ", "B'", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
+                          ("B ", "L ", "wbbwrrwrrbyyryyryyymmymmyggrrrggggggbbmbbmbbmwwgwwmwwm")])
 def test_two_fundamental_moves(move_command_1, move_command_2, expected_state):
     # Arrange
     cube = Cube()
@@ -43,6 +45,21 @@ def test_two_fundamental_moves(move_command_1, move_command_2, expected_state):
 
     # Assert
     assert cube.get_cube_state() == expected_state
+
+
+@pytest.mark.parametrize("cube_state, expected_solved",
+                         [("rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww", True),
+                          ("wbbwrrwrrbyyryyryyymmymmyggrrrggggggbbmbbmbbmwwgwwmwwm", False)])                          
+def test_check_solved(cube_state, expected_solved):
+    # Arrange
+    cube = Cube(cube_state)
+
+    # Act
+    actual_solved = cube.check_solved()
+
+    # Assert
+    assert expected_solved == actual_solved
+    
     
     
 
