@@ -29,22 +29,22 @@ class Piece:
     def __init__(self):
         """ The constructor for the Piece class. """        
 
-        self.colors = np.array(['k', 'k', 'k', 'k', 'k', 'k'])
+        self.colors = np.array(["k", "k", "k", "k", "k", "k"])
 
         # The sides that are rotated when a turn is initiated on given face key
-        self.turn_sequences = {'F': ['U', 'R', 'D', 'L'],
-                               'B': ['U', 'L', 'D', 'R'],
-                               'R': ['U', 'B', 'D', 'F'],
-                               'L': ['U', 'F', 'D', 'B'],
-                               'U': ['F', 'L', 'B', 'R'],
-                               'D': ['F', 'R', 'B', 'L']}
+        self.turn_sequences = {"F": ["U", "R", "D", "L"],
+                               "B": ["U", "L", "D", "R"],
+                               "R": ["U", "B", "D", "F"],
+                               "L": ["U", "F", "D", "B"],
+                               "U": ["F", "L", "B", "R"],
+                               "D": ["F", "R", "B", "L"]}
 
-        self.side_to_index_map = {'F': 0,
-                                  'B': 2,                                  
-                                  'R': 1,
-                                  'L': 3,
-                                  'U': 5,
-                                  'D': 4}
+        self.side_to_index_map = {"F": 0,
+                                  "B": 2,                                  
+                                  "R": 1,
+                                  "L": 3,
+                                  "U": 5,
+                                  "D": 4}
 
     def side_to_index(self, side):
         """ 
@@ -120,7 +120,7 @@ class Piece:
         """
 
         fig = plt.figure()
-        ax = fig.add_subplot(projection='3d')
+        ax = fig.add_subplot(projection="3d")
         ax.set_aspect("equal")
         ax.set_autoscale_on(True)
 
@@ -131,7 +131,7 @@ class Piece:
         ax.set_xlabel("x")
         ax.set_ylabel("y")
         ax.set_zlabel("z")
-        coord_system = [[2, 'x'], [2, 'y'], [-2, 'x'], [-2, 'y'], [-2, 'z'], [2, 'z']]
+        coord_system = [[2, "x"], [2, "y"], [-2, "x"], [-2, "y"], [-2, "z"], [2, "z"]]
         for i, (z, zdir) in enumerate(coord_system):
             side = Rectangle((-2, -2), 4, 4, facecolor=self.colors[i])
             ax.add_patch(side)
