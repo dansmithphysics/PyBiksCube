@@ -23,16 +23,11 @@ class CubeLookup:
         self.move_map = eval(self.move_map)
 
     def set_cube_state(self, cube_state):
-        if not isinstance(cube_state, (str, np.ndarray)):
-            raise ValueError("Move command should be a string or list of chr")
-
-        if len(cube_state) != 54:
-            raise ValueError("Cube state must be a 54-long list of chars or string of colors")
-
-        self.cube_state = np.fromstring(cube_state, dtype="|S1")
+        cube_state = str.encode(cube_state)
+        self.cube_state = np.frombuffer(cube_state, dtype="|S1", count=54)
 
     def get_cube_state(self):
-        return "".join(self.cube_state)
+        return "".join(self.cube_state.astype('str'))
 
     def move_decoder(self, move_command):
         if isinstance(move_command, (list, np.ndarray)):
@@ -64,7 +59,7 @@ class CubeLookup:
         self.cube_state = self.cube_state[self.move_map[move_command]]
 
     def check_solved(self):
-        return "".join(self.cube_state) == "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"
+        return "".join(self.cube_state.astype('str')) == "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"
 
     def plot(self):
         """ 
@@ -80,7 +75,7 @@ class CubeLookup:
             y_pos = 5-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i])
+                             facecolor=self.cube_state[i].decode("utf-8"))
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
             
@@ -89,7 +84,7 @@ class CubeLookup:
             y_pos = 2-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i])
+                             facecolor=self.cube_state[i].decode("utf-8"))
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
@@ -98,7 +93,7 @@ class CubeLookup:
             y_pos = -1-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i])
+                             facecolor=self.cube_state[i].decode("utf-8"))
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
@@ -108,7 +103,7 @@ class CubeLookup:
             y_pos = 2-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i])
+                             facecolor=self.cube_state[i].decode("utf-8"))
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
@@ -118,7 +113,7 @@ class CubeLookup:
             y_pos = 2-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i])
+                             facecolor=self.cube_state[i].decode("utf-8"))
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
@@ -128,7 +123,7 @@ class CubeLookup:
             y_pos = 2-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i])
+                             facecolor=self.cube_state[i].decode("utf-8"))
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 

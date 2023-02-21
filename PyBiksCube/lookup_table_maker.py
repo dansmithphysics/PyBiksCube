@@ -15,9 +15,12 @@ def lookup_table_calculator_for_move(move):
     cube.move_decoder(move)
     final_cube_state = list(cube.get_cube_state())
 
+    #remove_list = [
+    
     cur_map = np.empty(54, dtype=int)
     for i in range(54):
-        cur_map[i] = initial_cube_state.index(final_cube_state[i])
+        cur_map_ = initial_cube_state.index(final_cube_state[i])
+        cur_map[i] = cur_map_
 
     return cur_map
 
