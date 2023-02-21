@@ -34,7 +34,6 @@ def create_lookup_table(output_file_name):
     f.write(str(move_map))
     f.close()
 
-
 if __name__ == "__main__":
 
     create_lookup_table("./data/cube_lookup_table.txt")

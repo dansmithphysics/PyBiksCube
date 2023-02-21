@@ -10,14 +10,16 @@ from PyBiksCube import Piece
 
 class CubeLookup:
     def __init__(self, lookup_table_file_name, cube_state=None):
-
-        self.cube_state = np.array(list("rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"))
+        
+        self.cube_state = np.empty(54).astype("|S1")
                 
         if cube_state != None:
-            self.set_cube_state(cube_state)            
+            self.set_cube_state(cube_state)
+        else:
+            self.set_cube_state("rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww")
 
         # Load up the workhorse of this operation
-        self.move_map = open(lookup_table_file_name, 'r').read()        
+        self.move_map = open(lookup_table_file_name, 'r').read()
         self.move_map = eval(self.move_map)
 
     def set_cube_state(self, cube_state):
@@ -27,7 +29,7 @@ class CubeLookup:
         if len(cube_state) != 54:
             raise ValueError("Cube state must be a 54-long list of chars or string of colors")
 
-        self.cube_state = np.array(list(cube_state))
+        self.cube_state = np.fromstring(cube_state, dtype="|S1")
 
     def get_cube_state(self):
         return "".join(self.cube_state)
