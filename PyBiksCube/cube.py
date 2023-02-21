@@ -231,9 +231,10 @@ class Cube:
             Move command to perform.
         """
 
-        if isinstance(move_command, list):
+        if isinstance(move_command, (list, np.ndarray)):
             for move_command_ in move_command:
                 self.move_decoder(move_command_)
+            return
 
         if not isinstance(move_command, str):
             raise ValueError("Move command should be a string")
@@ -246,7 +247,7 @@ class Cube:
 
         valid_moves = fundamental_moves + double_moves
         if move_command not in valid_moves:
-            raise ValueError("Not a valid move_command: {move_command}")
+            raise ValueError(f"Not a valid move_command: {move_command}")
 
         if move_command in fundamental_moves:
             self.fundamental_move(move_command)
@@ -281,10 +282,10 @@ class Cube:
             if move_command[1] not in ["'", " "]:
                 raise ValueError("Primed commands should have a prime in their second position.")
         else:
-            raise ValueError("Move command should be a two character command: {move_command}.")
+            raise ValueError(f"Move command should be a two character command: {move_command}.")
 
         if move_command[0] not in "UFDLRB":
-            raise ValueError("Move command should follow UFDLRB notation: {move_command[0]}")
+            raise ValueError(f"Move command should follow UFDLRB notation: {move_command[0]}")
 
         direction = 1
         if move_command[1] == "'":
