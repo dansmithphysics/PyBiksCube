@@ -45,3 +45,12 @@ def side_type_converter(side, reverse=False):
         raise ValueError("Side map converter does not have side: {side}")
 
     return side_map[side]
+
+
+def convert_move_command(move_command):
+    move_command = move_command.strip()
+    move_command_letters = ["U", "F", "D", "L", "R", "B", "U'", "F'", "D'", "L'", "R'", "B'"]
+    move_command_dict = {}
+    for key in range(12):
+        move_command_dict[move_command_letters[key]] = key
+    return move_command_dict[move_command]

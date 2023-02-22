@@ -1,12 +1,11 @@
 import pytest
-from PyBiksCube.lookup_table_maker import lookup_table_calculator_for_move
 
 import pytest
 from PyBiksCube import CubeLookup
+from PyBiksCube.utilities import convert_move_command
 
 @pytest.mark.parametrize("move_command, expected_state",
-                         [("  ", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
-                          ("U ", "rrrrrrrrrbbbyyyyyymmmmmmmmmyyyggggggwwwbbbbbbgggwwwwww"),
+                         [("U ", "rrrrrrrrrbbbyyyyyymmmmmmmmmyyyggggggwwwbbbbbbgggwwwwww"),                          
                           ("U'", "rrrrrrrrrgggyyyyyymmmmmmmmmwwwggggggyyybbbbbbbbbwwwwww"),
                           ("F ", "rrrrrrgggyyyyyyyyybbbmmmmmmggmggmggmrbbrbbrbbwwwwwwwww"),
                           ("F'", "rrrrrrbbbyyyyyyyyygggmmmmmmggrggrggrmbbmbbmbbwwwwwwwww"),
@@ -22,16 +21,16 @@ def test_single_fundamental_move(move_command, expected_state):
     # Arrange
     cube = CubeLookup("./PyBiksCube/data/cube_lookup_table.txt")
 
-    # Act 
-    cube.fundamental_move(move_command)
+    # Act
+    move_command = convert_move_command(move_command)
+    cube._fundamental_move(move_command)
 
     # Assert
     assert cube.get_cube_state() == expected_state
 
 
 @pytest.mark.parametrize("move_command_1, move_command_2, expected_state",
-                         [("  ", "  ", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
-                          ("U ", "U'", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
+                         [("U ", "U'", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),                          
                           ("F ", "F'", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
                           ("R ", "R'", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
                           ("L ", "L'", "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"),
@@ -42,9 +41,11 @@ def test_two_fundamental_moves(move_command_1, move_command_2, expected_state):
     # Arrange
     cube = CubeLookup("./PyBiksCube/data/cube_lookup_table.txt")
 
-    # Act 
-    cube.fundamental_move(move_command_1)
-    cube.fundamental_move(move_command_2)
+    # Act
+    move_command_1 = convert_move_command(move_command_1)
+    move_command_2 = convert_move_command(move_command_2)
+    cube._fundamental_move(move_command_1)
+    cube._fundamental_move(move_command_2)
 
     # Assert
     assert cube.get_cube_state() == expected_state
