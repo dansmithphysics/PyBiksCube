@@ -49,8 +49,5 @@ def side_type_converter(side, reverse=False):
 
 def convert_move_command(move_command):
     move_command = move_command.strip()
-    move_command_letters = ["U", "F", "D", "L", "R", "B", "U'", "F'", "D'", "L'", "R'", "B'"]
-    move_command_dict = {}
-    for key in range(12):
-        move_command_dict[move_command_letters[key]] = key
+    move_command_dict = {"U":0, "F":1, "D":2, "L":3, "R":4, "B":5, "U'":6, "F'":7, "D'":8, "L'":9, "R'":10, "B'":11}
     return move_command_dict[move_command]

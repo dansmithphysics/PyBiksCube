@@ -14,7 +14,7 @@ from numba.experimental import jitclass
 class CubeLookup:
     def __init__(self, lookup_table_file_name, cube_state=None):
         
-        self.cube_state = np.empty(54).astype("|S1")
+        self.cube_state = np.empty(54, dtype=str)
                 
         if cube_state != None:
             self.set_cube_state(cube_state)
@@ -43,12 +43,14 @@ class CubeLookup:
             self.move_array[i] = move_map[key]        
         
     def set_cube_state(self, cube_state_):
-        cube_state_ = str.encode(cube_state_)
-        self.cube_state = np.frombuffer(cube_state_, dtype="|S1", count=54)
+        self.cube_state = np.array(list(cube_state_), dtype=str)
 
     def get_cube_state(self):
-        return "".join(self.cube_state.astype('str'))
+        return "".join(self.cube_state)
 
+    def get_raw_cube_state(self):
+        return self.cube_state
+    
     def move_decoder(self, move_command):
         if isinstance(move_command, (list, np.ndarray)):
             for move_command_ in move_command:
@@ -66,8 +68,15 @@ class CubeLookup:
     def _fundamental_move(self, move_command):
         self.cube_state = self.cube_state[self.move_array[move_command]]
 
+    def randomize(self, n_moves=None):
+        if n_moves is None:
+            n_moves = np.random.randint(1, 30)
+        mc_moves = np.random.choice(np.arange(12, dtype=np.int16), n_moves)
+        self.move_decoder(mc_moves)
+        return mc_moves
+        
     def check_solved(self):
-        return "".join(self.cube_state.astype('str')) == "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"
+        return self.get_cube_state() == "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"
 
     def plot(self):
         """ 
@@ -83,7 +92,7 @@ class CubeLookup:
             y_pos = 5-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i].decode("utf-8"))
+                             facecolor=self.cube_state[i])
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
             
@@ -92,7 +101,7 @@ class CubeLookup:
             y_pos = 2-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i].decode("utf-8"))
+                             facecolor=self.cube_state[i])
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
@@ -101,7 +110,7 @@ class CubeLookup:
             y_pos = -1-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i].decode("utf-8"))
+                             facecolor=self.cube_state[i])
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
@@ -111,7 +120,7 @@ class CubeLookup:
             y_pos = 2-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i].decode("utf-8"))
+                             facecolor=self.cube_state[i])
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
@@ -121,7 +130,7 @@ class CubeLookup:
             y_pos = 2-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i].decode("utf-8"))
+                             facecolor=self.cube_state[i])
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
@@ -131,7 +140,7 @@ class CubeLookup:
             y_pos = 2-y_pos
             rect = Rectangle((x_pos, y_pos), 1, 1,
                              edgecolor="black",
-                             facecolor=self.cube_state[i].decode("utf-8"))
+                             facecolor=self.cube_state[i])
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
