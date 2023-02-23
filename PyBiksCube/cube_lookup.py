@@ -19,7 +19,7 @@ class CubeLookup:
         if cube_state != None:
             self.set_cube_state(cube_state)
         else:
-            self.set_cube_state("rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww")
+            self.set_default_cube_state()
 
         # Load up the workhorse of this operation
         #move_map = open(lookup_table_file_name, 'r').read()
@@ -74,10 +74,17 @@ class CubeLookup:
         mc_moves = np.random.choice(np.arange(12, dtype=np.int16), n_moves)
         self.move_decoder(mc_moves)
         return mc_moves
-        
+
+    def set_default_cube_state(self):
+        self.set_cube_state("rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww")
+    
     def check_solved(self):
         return self.get_cube_state() == "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"
 
+    def check_match_against_key(self, key):
+        converted_key = np.array(list(key), dtype=str)
+        return np.sum(np.logical_and(converted_key == self.cube_state, converted_key != 'k')) == np.sum(converted_key != 'k')
+    
     def plot(self):
         """ 
         Creates a matplotlib plot of the cube
