@@ -5,13 +5,14 @@ from numpy import array, int16
 class Solver:
     def __init__(self, solver_file_name=None):
         self.array_of_dict_solvers = []
+        
         if solver_file_name is not None:
             array_of_dict_solvers = open(solver_file_name, 'r').read()
             self.array_of_dict_solvers = eval(array_of_dict_solvers)
             
     def solve_cube(self, cube, output_moves=False):
         if output_moves:
-            total_moves_to_solve = np.array([])
+            total_moves_to_solve = np.array([], dtype=np.int16)
         
         for solver_stage in self.array_of_dict_solvers:
             moves_to_solve = self.find_moves_to_solve_stage(cube, solver_stage)

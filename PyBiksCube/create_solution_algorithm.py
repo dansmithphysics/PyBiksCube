@@ -1,25 +1,18 @@
-from itertools import product
 import numpy as np
-from PyBiksCube import CubeLookup, Solver
-from PyBiksCube.utilities import convert_move_command
 import matplotlib.pyplot as plt
-import cProfile
-from numba import jit
-from operator import itemgetter
-from numpy import array, int16
+from PyBiksCube import CubeLookup, Solver
 
-def run_mc_samples(n_mc_cubes=10000, stages=None):
+
+def run_mc_samples(n_mc_cubes=10000, stages=None, verbose=False):
     """ The idea is that we iteratively build this badboy up. """
-    
-    reverser_lookup_table_letters = {"U":"U'", "F":"F'", "D":"D'", "L":"L'", "R":"R'", "B":"B'", "U'":"U", "F'":"F", "D'":"D", "L'":"L", "R'":"R", "B'":"B"}
-    reverser_lookup_table = {}
-    for key in reverser_lookup_table_letters:
-        reverser_lookup_table[convert_move_command(key)] = convert_move_command(reverser_lookup_table_letters[key])
-    
-    cube = CubeLookup("./PyBiksCube/data/cube_lookup_table.txt")
 
+    # Turns clockwise turns to counterclockwise
+    reverser_lookup_table = {0: 6, 1: 7, 2: 8, 3: 9, 4: 10, 5: 11, 6: 0, 7: 1, 8: 2, 9: 3, 10: 4, 11: 5}
+
+    cube = CubeLookup("./PyBiksCube/data/cube_lookup_table.txt")
     solver = Solver()
-    
+
+    # Default Stages
     if stages is None:
         stages = ["krkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkwkkkkkkk",
                   "krkrrkkkkkkkkkkkkkkkkkkkkkkkgkkkkkkkkkkkkkkkkkwkkkkkkk",
@@ -42,27 +35,25 @@ def run_mc_samples(n_mc_cubes=10000, stages=None):
                   "rrrrrrrrryyyyyyyykmmkmmmmmmgggggggggbbbbbbkbbwwwwwwwww",
                   "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"]
 
-    array_of_dict_solvers = [{} for i in range(len(stages))]    
+    array_of_dict_solvers = [{} for i in range(len(stages))]
     for i_stage, stage in enumerate(stages):
 
         # Start with the empty set, in case this stage can be skipped
         dict_solver = {stage: np.array([], dtype=np.int16)}
-        
-        for i_mc in range(n_mc_cubes):
-            
-            cube.set_cube_state(stage)
-            n_moves = np.random.randint(1, 10)
 
+        for i_mc in range(n_mc_cubes):
+
+            cube.set_cube_state(stage)
+            n_moves = int(np.ceil(10.0 * (i_mc + 1.0) / n_mc_cubes))
             mc_moves = cube.randomize(n_moves)
 
-            for i_stage_correction in np.arange(0, i_stage):
-                moves_to_solve = find_moves_to_solve_stage(cube, array_of_dict_solvers[i_stage_correction])
-                cube.move_decoder(moves_to_solve)
-                mc_moves = np.append(mc_moves, moves_to_solve)
+            solver.array_of_dict_solvers = array_of_dict_solvers[0:i_stage]
+            moves_to_solve_to_prev_stage = solver.solve_cube(cube, True)
+            mc_moves = np.append(mc_moves, moves_to_solve_to_prev_stage)
 
             # The unsolved cube
             cube_state = cube.get_cube_state()
-                
+
             save_path = False
             if cube_state not in dict_solver:
                 save_path = True
@@ -73,51 +64,30 @@ def run_mc_samples(n_mc_cubes=10000, stages=None):
             if save_path:
                 # The steps needed to solve it are the reverse of what made it
                 mc_moves = np.flip(mc_moves)
-                for i in range(len(mc_moves)):
-                    mc_moves[i] = reverser_lookup_table[mc_moves[i]]
-
+                mc_moves = [reverser_lookup_table[mc_move] for mc_move in mc_moves]
                 dict_solver[cube_state] = mc_moves
-                
-        print("Number of unique states: %i" % len(dict_solver))
-        
-        for i, key in enumerate(dict_solver):
-            print("%i) \t %s \t %i" % (i, key, len(dict_solver[key])), end=" ")
-            print(dict_solver[key])
-            
+
+        if verbose:
+            print("Number of unique states: %i" % len(dict_solver))
+            for i, key in enumerate(dict_solver):
+                print("%i) \t %s \t %i" % (i, key, len(dict_solver[key])), end=" ")
+                print(dict_solver[key])
+
         array_of_dict_solvers[i_stage] = dict_solver
 
     return array_of_dict_solvers
 
 
-def make_list(list_to_convert):
-    return np.array(list(list_to_convert), dtype=str)
-
-
-def find_moves_to_solve_stage(cube, solver_dict):
-    end_stage = cube.get_raw_cube_state()
-    
-    for key in solver_dict:
-        if cube.check_match_against_key(make_list(key)):
-            return solver_dict[key]
-
-    for key in solver_dict:
-        key_cur = make_list(key)
-        print(key, np.sum(np.logical_and(key_cur == end_stage, map_key != 'k')), np.sum(key_cur != 'k'))
-        print("".join(end_stage))
-        
-    raise ValueError("Didn't find a solution. Is the cube busted? Or maybe a solution is missing?")
-
-
 if __name__ == "__main__":
-    '''
-    array_of_dict_solvers = run_mc_samples(100000)
+    
+    array_of_dict_solvers = run_mc_samples(1000, verbose=True)
 
     f = open("algorithm_solver_.txt", "w")
     f.write(str(array_of_dict_solvers))
-    f.close()
-    '''
+    f.close()    
 
-    solver = Solver("algorithm_solver.txt")
+    #solver = Solver("algorithm_solver.txt")
+    solver = Solver("algorithm_solver_.txt")
 
     cube = CubeLookup("./PyBiksCube/data/cube_lookup_table.txt")    
     cube.randomize()
