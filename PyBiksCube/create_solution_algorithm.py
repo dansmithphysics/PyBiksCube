@@ -7,7 +7,8 @@ def run_mc_samples(n_mc_cubes=10000, stages=None, verbose=False):
     """ The idea is that we iteratively build this badboy up. """
 
     # Turns clockwise turns to counterclockwise
-    reverser_lookup_table = {0: 6, 1: 7, 2: 8, 3: 9, 4: 10, 5: 11, 6: 0, 7: 1, 8: 2, 9: 3, 10: 4, 11: 5}
+    reverser_lookup_table = {0: 6, 1: 7, 2: 8, 3: 9, 4: 10, 5: 11,
+                             6: 0, 7: 1, 8: 2, 9: 3, 10: 4, 11: 5}
 
     cube = CubeLookup("./PyBiksCube/data/cube_lookup_table.txt")
     solver = Solver()
@@ -68,10 +69,9 @@ def run_mc_samples(n_mc_cubes=10000, stages=None, verbose=False):
                 dict_solver[cube_state] = mc_moves
 
         if verbose:
-            print("Number of unique states: %i" % len(dict_solver))
+            print(f"Number of unique states: {len(dict_solver)}")
             for i, key in enumerate(dict_solver):
-                print("%i) \t %s \t %i" % (i, key, len(dict_solver[key])), end=" ")
-                print(dict_solver[key])
+                print(f"{i}) \t {key} \t {len(dict_solver[key])} \t {dict_solver[key]}")
 
         array_of_dict_solvers[i_stage] = dict_solver
 
@@ -79,24 +79,23 @@ def run_mc_samples(n_mc_cubes=10000, stages=None, verbose=False):
 
 
 if __name__ == "__main__":
-    
+
     array_of_dict_solvers = run_mc_samples(1000, verbose=True)
 
-    f = open("algorithm_solver_.txt", "w")
-    f.write(str(array_of_dict_solvers))
-    f.close()    
+    with open("algorithm_solver_.txt", "w", encoding="utf-8") as f:
+        f.write(str(array_of_dict_solvers))
 
     #solver = Solver("algorithm_solver.txt")
     solver = Solver("algorithm_solver_.txt")
 
-    cube = CubeLookup("./PyBiksCube/data/cube_lookup_table.txt")    
+    cube = CubeLookup("./PyBiksCube/data/cube_lookup_table.txt")
     cube.randomize()
 
     cube.plot()
     plt.title("Before")
 
     solver.solve_cube(cube)
-    
+
     cube.plot()
     plt.title("After")
     plt.show()
