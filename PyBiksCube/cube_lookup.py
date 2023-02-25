@@ -6,10 +6,6 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
 from PyBiksCube.utilities import side_type_converter
-from PyBiksCube import Piece
-
-from numba import byte, int16 # import the types
-from numba.experimental import jitclass
 
 class CubeLookup:
     def __init__(self, lookup_table_file_name, cube_state=None):
