@@ -175,10 +175,3 @@ class CubeLookup:
 
         ax.set_xlim(-3, 9)
         ax.set_ylim(-3, 6)
-
-if __name__ == "__main__":
-    # UFDLRB
-    cube = CubeLookup()
-    cube.move_decoder(0)
-    cube.plot()
-    plt.show()
