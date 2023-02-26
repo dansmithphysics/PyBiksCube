@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from PyBiksCube import CubeLookup, Solver
 
 
@@ -78,31 +77,8 @@ def run_mc_samples(n_mc_cubes=10000, stages=None, verbose=False):
     return array_of_dict_solvers
 
 
-def create_algorithm(output_file_name, n_mc_cubes=10000, verbose=False, stages=None):
-    array_of_dict_solvers = run_mc_samples(n_mc_cubes, verbose=True, stages=None)
+def create_algorithm(output_file_name, n_mc_cubes=10000, stages=None, verbose=False):
+    array_of_dict_solvers = run_mc_samples(n_mc_cubes, stages, verbose)
 
-    with open(output_file_name, "w", encoding="utf-8") as f:
-        f.write(str(array_of_dict_solvers))
-
-    
-if __name__ == "__main__":
-
-
-
-
-    
-
-    #solver = Solver("algorithm_solver.txt")
-    solver = Solver("algorithm_solver_.txt")
-
-    cube = CubeLookup()
-    cube.randomize()
-
-    cube.plot()
-    plt.title("Before")
-
-    solver.solve_cube(cube)
-
-    cube.plot()
-    plt.title("After")
-    plt.show()
+    with open(output_file_name, "w", encoding="utf-8") as file_out:
+        file_out.write(str(array_of_dict_solvers))

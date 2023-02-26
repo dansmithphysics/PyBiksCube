@@ -20,7 +20,7 @@ class Solver:
                 # Check if the selected file exists. If not, throw error.
                 if not os.path.isfile(solver_file_name):
                     raise ValueError(f"Filename given did not open: {solver_file_name}")
-                
+
             try:
                 with open(solver_file_name, 'r', encoding="utf-8") as file:
                     self.array_of_dict_solvers = eval(file.read())
@@ -52,7 +52,9 @@ class Solver:
 
         for key in solver_dict:
             key_cur = np.array(list(key), dtype=str)
-            print(key, np.sum(np.logical_and(key_cur == end_stage, key_cur != 'k')), np.sum(key_cur != 'k'))
-            print("".join(end_stage))
+            print(key,
+                  np.sum(np.logical_and(key_cur == end_stage, key_cur != 'k')),
+                  np.sum(key_cur != 'k'),
+                  "".join(end_stage))
 
-        raise ValueError("Didn't find a solution. Is the cube busted? Or maybe a solution is missing?")
+        raise ValueError("Didn't find a solution. Is the cube busted? Or a solution is missing?")

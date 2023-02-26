@@ -59,7 +59,7 @@ class CubeLookup:
         try:
             self.move_array = np.loadtxt(lookup_table_file_name, delimiter=",", dtype=np.int16)
         except:
-            raise ValueError("Something wrong happened with opening the lookup table.")
+            ValueError("Something wrong happened with opening the lookup table.")
 
     def set_cube_state(self, cube_state_):
         self.cube_state = np.array(list(cube_state_), dtype=str)
@@ -102,7 +102,10 @@ class CubeLookup:
 
     def check_match_against_key(self, key):
         converted_key = np.array(list(key), dtype=str)
-        return np.sum(np.logical_and(converted_key == self.cube_state, converted_key != 'k')) == np.sum(converted_key != 'k')
+        count_matches = np.sum(np.logical_and(converted_key == self.cube_state,
+                                              converted_key != 'k'))
+        counts_expected = np.sum(converted_key != 'k')
+        return count_matches == counts_expected
 
     def plot(self):
         """
