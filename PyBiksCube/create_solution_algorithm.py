@@ -10,7 +10,7 @@ def run_mc_samples(n_mc_cubes=10000, stages=None, verbose=False):
     reverser_lookup_table = {0: 6, 1: 7, 2: 8, 3: 9, 4: 10, 5: 11,
                              6: 0, 7: 1, 8: 2, 9: 3, 10: 4, 11: 5}
 
-    cube = CubeLookup("./PyBiksCube/data/cube_lookup_table.txt")
+    cube = CubeLookup()
     solver = Solver()
 
     # Default Stages
@@ -78,17 +78,24 @@ def run_mc_samples(n_mc_cubes=10000, stages=None, verbose=False):
     return array_of_dict_solvers
 
 
+def create_algorithm(output_file_name, n_mc_cubes=10000, verbose=False, stages=None):
+    array_of_dict_solvers = run_mc_samples(n_mc_cubes, verbose=True, stages=None)
+
+    with open(output_file_name, "w", encoding="utf-8") as f:
+        f.write(str(array_of_dict_solvers))
+
+    
 if __name__ == "__main__":
 
-    array_of_dict_solvers = run_mc_samples(1000, verbose=True)
 
-    with open("algorithm_solver_.txt", "w", encoding="utf-8") as f:
-        f.write(str(array_of_dict_solvers))
+
+
+    
 
     #solver = Solver("algorithm_solver.txt")
     solver = Solver("algorithm_solver_.txt")
 
-    cube = CubeLookup("./PyBiksCube/data/cube_lookup_table.txt")
+    cube = CubeLookup()
     cube.randomize()
 
     cube.plot()

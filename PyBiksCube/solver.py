@@ -1,15 +1,31 @@
+import os.path
 import numpy as np
 from numpy import array, int16
-from PyBiksCube.utilities import convert_move_command
+
 
 class Solver:
     def __init__(self, solver_file_name=None):
         self.array_of_dict_solvers = []
 
         if solver_file_name is not None:
-            with open(solver_file_name, 'r', encoding="utf-8") as file:
-                array_of_dict_solvers = file.read()
-            self.array_of_dict_solvers = eval(array_of_dict_solvers)
+            if solver_file_name == "default":
+                solver_file_name = os.path.join(os.path.dirname(os.path.realpath(__file__)),
+                                                "data/default_algorithm_solver.txt")
+
+                # Check if the default file exists. If not, create it.
+                if not os.path.isfile(solver_file_name):
+                    from PyBiksCube.create_solution_algorithm import create_algorithm
+                    create_algorithm(solver_file_name)
+            else:
+                # Check if the selected file exists. If not, throw error.
+                if not os.path.isfile(solver_file_name):
+                    raise ValueError(f"Filename given did not open: {solver_file_name}")
+                
+            try:
+                with open(solver_file_name, 'r', encoding="utf-8") as file:
+                    self.array_of_dict_solvers = eval(file.read())
+            except:
+                raise ValueError("Something wrong happened with opening the algorithm file.")
 
     def solve_cube(self, cube, output_moves=False):
         if output_moves:
