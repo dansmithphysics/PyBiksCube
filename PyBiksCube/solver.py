@@ -6,7 +6,8 @@ from numpy import array, int16
 class Solver:
     def __init__(self, solver_file_name=None):
         self.array_of_dict_solvers = []
-
+        self.cube = None
+        
         if solver_file_name is not None:
             if solver_file_name == "default":
                 solver_file_name = os.path.join(os.path.dirname(os.path.realpath(__file__)),
@@ -28,26 +29,31 @@ class Solver:
                 raise ValueError("Something wrong happened with opening the algorithm file.")
 
     def solve_cube(self, cube, output_moves=False):
+        self.cube = cube
+        
         if output_moves:
             total_moves_to_solve = np.array([], dtype=np.int16)
 
-        for solver_stage in self.array_of_dict_solvers:
-            moves_to_solve = self.find_moves_to_solve_stage(cube, solver_stage)
+        for i_solver_stage in range(len(self.array_of_dict_solvers)):
+            moves_to_solve = self.find_moves_to_solve_stage(i_solver_stage)
             cube.move_decoder(moves_to_solve)
 
             if output_moves:
                 total_moves_to_solve = np.append(total_moves_to_solve, moves_to_solve)
 
+        self.cube = None
+                
         if output_moves:
-            return total_moves_to_solve
-
+            return total_moves_to_solve        
+        
         return None
 
-    def find_moves_to_solve_stage(self, cube, solver_dict):
-        end_stage = cube.get_raw_cube_state()
+    def find_moves_to_solve_stage(self, i_solver_dict):
+        solver_dict = self.array_of_dict_solvers[i_solver_dict]
+        end_stage = self.cube.get_raw_cube_state()
 
         for key in solver_dict:
-            if cube.check_match_against_key(np.array(list(key), dtype=str)):
+            if self.cube.check_match_against_key(np.array(list(key), dtype=str)):
                 return solver_dict[key]
 
         for key in solver_dict:
