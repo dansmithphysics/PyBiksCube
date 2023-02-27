@@ -1,11 +1,17 @@
-# PyBikCube
-My take on Rubik's Cube code in python.
+# PyBiksCube
 
-So far, I am not happiest with the implementation but it passes the unit tests.
-The cube is a 3x3x3 array of Pieces objects.
+My take at a Rubik's Cube representation and solver.
 
-Moves are rotates of the pieces in the array + rotation of the pieces.
+Provides:
+1. Two representations of a Rubik's Cube, one object oriented (Cube) and the other optimized for speed (CubeLookup)
+2. Solver class for solving the two Cube classes
+3. Helper function to create algorithms to solve the cube via the Solver class
 
-It isn't the most efficient since some of the pieces don't move, especially the center of the cube.
+The package includes an example script (PyBiksCube/example.py) that
+shows the creation of a Cube, scrambling, solving, and plotting.
 
-Perhaps, as I keep working, I will find a more efficient implementation.
+The lookup tables and solving algorithm are produced on the fly if they
+do not already exist inside of the PyBiksCube/data directory. They are 
+saved as text files.
+
+Includes a PyTest suit, in the tests directory.

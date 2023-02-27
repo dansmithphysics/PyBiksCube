@@ -1,4 +1,4 @@
-""" This module defines the Piece class. """
+""" Module that defines the Piece class. """
 
 import numpy as np
 

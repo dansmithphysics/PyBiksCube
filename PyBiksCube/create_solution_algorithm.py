@@ -1,9 +1,54 @@
+""" Module that creates the default algorithm solver """
 import numpy as np
 from PyBiksCube import CubeLookup, Solver
 
 
+def create_algorithm(output_file_name, n_mc_cubes=10000, stages=None, verbose=False):
+    """
+    Iteratively finds the moves needed to solve a cube from a shuffled state up to the state 
+    perscribed in a given stage. 
+
+    Builds up a solution, starting from the first stage which is solving only one or a
+    couple pieces, up to the last stage that solves for the rest of the cube.     
+
+    Produces the steps needed that the Solver class uses to execute cube solves. 
+
+    Parameters
+    ----------
+    output_file_name : str
+        File name where algorithm is saved to text.
+    n_mc_cubes : int
+        Number of Monte Carlo cube shuffles uses for each stage.
+        The higher the number, the slower the run but the more likely
+        an optimized solving will be found.
+    stages : array of strs
+        Stages used for solving, keys / masks for cube states.
+        54 long strings, representing each face on cube.
+        Default of None results in a one piece at a time approach.
+    verbose : bool
+    """
+    array_of_dict_solvers = run_mc_samples(n_mc_cubes, stages, verbose)
+
+    with open(output_file_name, "w", encoding="utf-8") as file_out:
+        file_out.write(str(array_of_dict_solvers))
+
+
 def run_mc_samples(n_mc_cubes=10000, stages=None, verbose=False):
-    """ The idea is that we iteratively build this badboy up. """
+    """
+    The idea is that we iteratively build this badboy up.
+
+    Parameters
+    ----------
+    n_mc_cubes : int
+        Number of Monte Carlo cube shuffles uses for each stage.
+        The higher the number, the slower the run but the more likely
+        an optimized solving will be found.
+    stages : array of strs
+        Stages used for solving, keys / masks for cube states.
+        54 long strings, representing each face on cube.
+        Default of None results in a one piece at a time approach.
+    verbose : bool
+    """
 
     # Turns clockwise turns to counterclockwise
     reverser_lookup_table = {0: 6, 1: 7, 2: 8, 3: 9, 4: 10, 5: 11,
@@ -75,10 +120,3 @@ def run_mc_samples(n_mc_cubes=10000, stages=None, verbose=False):
         array_of_dict_solvers[i_stage] = dict_solver
 
     return array_of_dict_solvers
-
-
-def create_algorithm(output_file_name, n_mc_cubes=10000, stages=None, verbose=False):
-    array_of_dict_solvers = run_mc_samples(n_mc_cubes, stages, verbose)
-
-    with open(output_file_name, "w", encoding="utf-8") as file_out:
-        file_out.write(str(array_of_dict_solvers))

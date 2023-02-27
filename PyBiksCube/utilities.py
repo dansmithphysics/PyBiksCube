@@ -48,6 +48,8 @@ def side_type_converter(side, reverse=False):
 
 
 def convert_move_command(move_command):
+    """ Converts from UFDLRB notation to their indices, useful for CubeLookup """
     move_command = move_command.strip()
-    move_command_dict = {"U":0, "F":1, "D":2, "L":3, "R":4, "B":5, "U'":6, "F'":7, "D'":8, "L'":9, "R'":10, "B'":11}
+    move_command_dict = {"U":0, "F":1, "D":2, "L":3, "R":4, "B":5,
+                         "U'":6, "F'":7, "D'":8, "L'":9, "R'":10, "B'":11}
     return move_command_dict[move_command]

@@ -1,4 +1,4 @@
-""" This module defines the Solver """
+""" Module that defines the Solver class """
 
 import os.path
 import numpy as np

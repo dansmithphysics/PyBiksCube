@@ -1,4 +1,4 @@
-""" This module defines the Cube class. """
+""" Module that defines the Cube class. """
 
 from itertools import product
 import numpy as np

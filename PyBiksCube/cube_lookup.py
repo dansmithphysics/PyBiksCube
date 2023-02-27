@@ -1,4 +1,4 @@
-""" This module defines the Cube class based on look up tables """
+""" Module that defines the Cube class based on look up tables """
 
 import os.path
 from itertools import product
@@ -16,6 +16,9 @@ class CubeLookup:
     - commands to perform moves on the cube following the UFDLRB notation
     - command to check if the cube is solved
     - plotting script for debugging and visualization
+
+    Class is optimized for speed, so does not sanitize inputs
+    and is missing some helpful things like automatically converts moves to indices.
 
     Attributes
     ----------
