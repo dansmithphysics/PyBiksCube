@@ -214,8 +214,8 @@ class CubeLookup:
         """
         converted_key = np.array(list(key), dtype=str)
         count_matches = np.sum(np.logical_and(converted_key == self.cube_state,
-                                              converted_key != 'k'))
-        counts_expected = np.sum(converted_key != 'k')
+                                              converted_key != "k"))
+        counts_expected = np.sum(converted_key != "k")
         return count_matches == counts_expected
 
     def plot(self):
