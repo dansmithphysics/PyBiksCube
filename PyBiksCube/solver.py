@@ -2,7 +2,8 @@
 
 import os.path
 import numpy as np
-from numpy import array, int16 # Needed for eval on loaded file
+from numpy import array, int16  # Needed for eval on loaded file
+
 
 class Solver:
     """
@@ -22,7 +23,7 @@ class Solver:
     Attributes
     ----------
     array_of_dict_solvers : array of dictionaries
-        Array of the dictionaries used in each stage. 
+        Array of the dictionaries used in each stage.
     cube : Cube object being solved.
     """
 
@@ -45,8 +46,10 @@ class Solver:
 
         if solver_file_name is not None:
             if solver_file_name == "default":
-                solver_file_name = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                                "data/default_algorithm_solver.txt")
+                solver_file_name = os.path.join(
+                    os.path.dirname(os.path.realpath(__file__)),
+                    "data/default_algorithm_solver.txt",
+                )
 
                 # Check if the default file exists. If not, create it.
                 if not os.path.isfile(solver_file_name):
@@ -54,6 +57,7 @@ class Solver:
                     # However, this is only used if the default solver doesn't already exist
                     # and importing here solves a cyclical import error.
                     from PyBiksCube.create_solution_algorithm import create_algorithm
+
                     create_algorithm(solver_file_name)
             else:
                 # Check if the selected file exists. If not, throw error.
@@ -64,18 +68,20 @@ class Solver:
                 with open(solver_file_name, "r", encoding="utf-8") as file:
                     self.array_of_dict_solvers = eval(file.read())
             except:
-                raise ValueError("Something wrong happened with opening the algorithm file.")
+                raise ValueError(
+                    "Something wrong happened with opening the algorithm file."
+                )
 
     def solve_cube(self, cube, output_moves=False):
         """
         Solves the given cube using the algorithm that is already loaded into the class.
-        
+
         Parameters
         ----------
         cube : cube object
             The cube to be solved. Is loaded into the class attribute cube.
         output_moves : bool
-            Returns the moves used to solve. 
+            Returns the moves used to solve.
         """
 
         self.cube = cube
@@ -121,9 +127,13 @@ class Solver:
 
         for key in solver_dict:
             key_cur = np.array(list(key), dtype=str)
-            print(key,
-                  np.sum(np.logical_and(key_cur == end_stage, key_cur != "k")),
-                  np.sum(key_cur != "k"),
-                  "".join(end_stage))
+            print(
+                key,
+                np.sum(np.logical_and(key_cur == end_stage, key_cur != "k")),
+                np.sum(key_cur != "k"),
+                "".join(end_stage),
+            )
 
-        raise ValueError("Didn't find a solution. Is the cube busted? Or a solution is missing?")
+        raise ValueError(
+            "Didn't find a solution. Is the cube busted? Or a solution is missing?"
+        )

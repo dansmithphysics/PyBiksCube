@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
+
 class CubeLookup:
     """
     Representation of a Rubik's Cube.
@@ -29,7 +30,7 @@ class CubeLookup:
     def __init__(self, lookup_table_file_name=None, cube_state=None):
         """
         The constructor for the Cube class.
-        
+
         Parameters
         ----------
         lookup_table_file_name : str
@@ -47,8 +48,10 @@ class CubeLookup:
             self.set_cube_state(cube_state)
 
         if lookup_table_file_name is None:
-            lookup_table_file_name = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                                                  "data/default_cube_lookup_table.txt")
+            lookup_table_file_name = os.path.join(
+                os.path.dirname(os.path.realpath(__file__)),
+                "data/default_cube_lookup_table.txt",
+            )
 
             # Check if the default file exists. If not, create it.
             if not os.path.isfile(lookup_table_file_name):
@@ -56,14 +59,19 @@ class CubeLookup:
                 # However, this is only used if the default table doesn't already exist
                 # and importing here solves a cyclical import error.
                 from PyBiksCube.create_lookup_table import create_lookup_table
+
                 create_lookup_table(lookup_table_file_name)
         else:
             # Check if the selected file exists. If not, throw error.
             if not os.path.isfile(lookup_table_file_name):
-                raise ValueError(f"Filename given did not open: {lookup_table_file_name}")
+                raise ValueError(
+                    f"Filename given did not open: {lookup_table_file_name}"
+                )
 
         try:
-            self.move_array = np.loadtxt(lookup_table_file_name, delimiter=",", dtype=np.int16)
+            self.move_array = np.loadtxt(
+                lookup_table_file_name, delimiter=",", dtype=np.int16
+            )
         except:
             raise ValueError("Something wrong happened with opening the lookup table.")
 
@@ -108,7 +116,7 @@ class CubeLookup:
         return self.cube_state
 
     def move_decoder(self, move_command):
-        """ 
+        """
         Decodes move command, decomposing more complicated moves
         into their fundamental movement components that are
         then executed.
@@ -137,7 +145,7 @@ class CubeLookup:
         self._fundamental_move(move_command)
 
     def _fundamental_move(self, move_command):
-        """ 
+        """
         Executes fundamental movements.
         The fundamental movements are U, D, R, L, F, B
         and U', D', R', L', F', B'
@@ -155,7 +163,7 @@ class CubeLookup:
 
     def randomize(self, n_moves=None):
         """
-        Randomizes the cube state by applying 
+        Randomizes the cube state by applying
         n_moves number of random moves on cube.
 
         Parameters
@@ -180,7 +188,7 @@ class CubeLookup:
         self.set_cube_state("rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww")
 
     def check_solved(self):
-        """ 
+        """
         Checks whether the cube is solved.
         Perhaps this can be sped up by only looking at
         the minimum needed, but looking at the full cube for now.
@@ -191,7 +199,10 @@ class CubeLookup:
             Boolean of whether or not the cube is solved.
         """
 
-        return self.get_cube_state() == "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"
+        return (
+            self.get_cube_state()
+            == "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"
+        )
 
     def check_match_against_key(self, key):
         """
@@ -213,8 +224,9 @@ class CubeLookup:
             Boolean of whether or not the key matches the cube.
         """
         converted_key = np.array(list(key), dtype=str)
-        count_matches = np.sum(np.logical_and(converted_key == self.cube_state,
-                                              converted_key != "k"))
+        count_matches = np.sum(
+            np.logical_and(converted_key == self.cube_state, converted_key != "k")
+        )
         counts_expected = np.sum(converted_key != "k")
         return count_matches == counts_expected
 
@@ -229,58 +241,58 @@ class CubeLookup:
 
         for i, (y_pos, x_pos) in enumerate(product(range(3), repeat=2)):
             i += 9 * 0
-            y_pos = 5-y_pos
-            rect = Rectangle((x_pos, y_pos), 1, 1,
-                             edgecolor="black",
-                             facecolor=self.cube_state[i])
+            y_pos = 5 - y_pos
+            rect = Rectangle(
+                (x_pos, y_pos), 1, 1, edgecolor="black", facecolor=self.cube_state[i]
+            )
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
         for i, (y_pos, x_pos) in enumerate(product(range(3), repeat=2)):
             i += 9 * 1
-            y_pos = 2-y_pos
-            rect = Rectangle((x_pos, y_pos), 1, 1,
-                             edgecolor="black",
-                             facecolor=self.cube_state[i])
+            y_pos = 2 - y_pos
+            rect = Rectangle(
+                (x_pos, y_pos), 1, 1, edgecolor="black", facecolor=self.cube_state[i]
+            )
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
         for i, (y_pos, x_pos) in enumerate(product(range(3), repeat=2)):
             i += 9 * 2
-            y_pos = -1-y_pos
-            rect = Rectangle((x_pos, y_pos), 1, 1,
-                             edgecolor="black",
-                             facecolor=self.cube_state[i])
+            y_pos = -1 - y_pos
+            rect = Rectangle(
+                (x_pos, y_pos), 1, 1, edgecolor="black", facecolor=self.cube_state[i]
+            )
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
         for i, (y_pos, x_pos) in enumerate(product(range(3), repeat=2)):
             i += 9 * 3
             x_pos = x_pos - 3
-            y_pos = 2-y_pos
-            rect = Rectangle((x_pos, y_pos), 1, 1,
-                             edgecolor="black",
-                             facecolor=self.cube_state[i])
+            y_pos = 2 - y_pos
+            rect = Rectangle(
+                (x_pos, y_pos), 1, 1, edgecolor="black", facecolor=self.cube_state[i]
+            )
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
         for i, (y_pos, x_pos) in enumerate(product(range(3), repeat=2)):
             i += 9 * 4
             x_pos = x_pos + 3
-            y_pos = 2-y_pos
-            rect = Rectangle((x_pos, y_pos), 1, 1,
-                             edgecolor="black",
-                             facecolor=self.cube_state[i])
+            y_pos = 2 - y_pos
+            rect = Rectangle(
+                (x_pos, y_pos), 1, 1, edgecolor="black", facecolor=self.cube_state[i]
+            )
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 
         for i, (y_pos, x_pos) in enumerate(product(range(3), repeat=2)):
             i += 9 * 5
             x_pos = x_pos + 6
-            y_pos = 2-y_pos
-            rect = Rectangle((x_pos, y_pos), 1, 1,
-                             edgecolor="black",
-                             facecolor=self.cube_state[i])
+            y_pos = 2 - y_pos
+            rect = Rectangle(
+                (x_pos, y_pos), 1, 1, edgecolor="black", facecolor=self.cube_state[i]
+            )
             ax.add_patch(rect)
             ax.text(x_pos + 0.1, y_pos + 0.1, i)
 

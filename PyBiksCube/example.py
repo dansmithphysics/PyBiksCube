@@ -5,7 +5,7 @@ from PyBiksCube import CubeLookup, Solver
 
 
 def example():
-    """ An example script that creates a cube, scrambles it, and solves it again. """
+    """An example script that creates a cube, scrambles it, and solves it again."""
 
     # Initialize a cube.
     cube = CubeLookup()

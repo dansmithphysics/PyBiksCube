@@ -5,13 +5,13 @@ from PyBiksCube import CubeLookup, Solver
 
 def create_algorithm(output_file_name, n_mc_cubes=10000, stages=None, verbose=False):
     """
-    Iteratively finds the moves needed to solve a cube from a shuffled state up to the state 
-    perscribed in a given stage. 
+    Iteratively finds the moves needed to solve a cube from a shuffled state up to the state
+    perscribed in a given stage.
 
     Builds up a solution, starting from the first stage which is solving only one or a
-    couple pieces, up to the last stage that solves for the rest of the cube.     
+    couple pieces, up to the last stage that solves for the rest of the cube.
 
-    Produces the steps needed that the Solver class uses to execute cube solves. 
+    Produces the steps needed that the Solver class uses to execute cube solves.
 
     Parameters
     ----------
@@ -51,43 +51,55 @@ def run_mc_samples(n_mc_cubes=10000, stages=None, verbose=False):
     """
 
     # Turns clockwise turns to counterclockwise
-    reverser_lookup_table = {0: 6, 1: 7, 2: 8, 3: 9, 4: 10, 5: 11,
-                             6: 0, 7: 1, 8: 2, 9: 3, 10: 4, 11: 5}
+    reverser_lookup_table = {
+        0: 6,
+        1: 7,
+        2: 8,
+        3: 9,
+        4: 10,
+        5: 11,
+        6: 0,
+        7: 1,
+        8: 2,
+        9: 3,
+        10: 4,
+        11: 5,
+    }
 
     cube = CubeLookup()
     solver = Solver()
 
     # Default Stages
     if stages is None:
-        stages = ["krkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkwkkkkkkk",
-                  "krkrrkkkkkkkkkkkkkkkkkkkkkkkgkkkkkkkkkkkkkkkkkwkkkkkkk",
-                  "krkrrkkrkkykkkkkkkkkkkkkkkkkgkkkkkkkkkkkkkkkkkwkkkkkkk",
-                  "krkrrrkrkkykkkkkkkkkkkkkkkkkgkkkkkkkkbkkkkkkkkwkkkkkkk",
-                  "rrkrrrkrkkykkkkkkkkkkkkkkkkggkkkkkkkkbkkkkkkkkwwkkkkkk",
-                  "rrrrrrkrkkykkkkkkkkkkkkkkkkggkkkkkkkkbbkkkkkkwwwkkkkkk",              
-                  "rrrrrrrrkyykkkkkkkkkkkkkkkkgggkkkkkkkbbkkkkkkwwwkkkkkk",
-                  "rrrrrrrrryyykkkkkkkkkkkkkkkgggkkkkkkbbbkkkkkkwwwkkkkkk",
-                  "rrrrrrrrryyykkkkkkkkkkkkkkkgggggkkkkbbbkkkkkkwwwkwwkkk",
-                  "rrrrrrrrryyykkkkkkkkkkkkkkkgggggkkkkbbbkbbkkkwwwwwwkkk",
-                  "rrrrrrrrryyyyykkkkkkkkkkkkkggggggkkkbbbkbbkkkwwwwwwkkk",
-                  "rrrrrrrrryyyyyykkkkkkkkkkkkggggggkkkbbbbbbkkkwwwwwwkkk",
-                  "rrrrrrrrryyyyyykkkkkkkmkkmkggggggkkkbbbbbbkkkwwwwwwkwk",
-                  "rrrrrrrrryyyyyykkkkkkmmkkmkggggggkgkbbbbbbkkkwwwwwwkwk",
-                  "rrrrrrrrryyyyyykkkkkkmmmkmkggggggkgkbbbbbbkbkwwwwwwkwk",
-                  "rrrrrrrrryyyyyykykkmkmmmkmkggggggkgkbbbbbbkbkwwwwwwkwk",
-                  "rrrrrrrrryyyyyykykkmkmmmmmkggggggggkbbbbbbkbkwwwwwwkww",
-                  "rrrrrrrrryyyyyykykkmkmmmmmmggggggggkbbbbbbkbbwwwwwwwww",
-                  "rrrrrrrrryyyyyyyykmmkmmmmmmgggggggggbbbbbbkbbwwwwwwwww",
-                  "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww"]
+        stages = [
+            "krkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkwkkkkkkk",
+            "krkrrkkkkkkkkkkkkkkkkkkkkkkkgkkkkkkkkkkkkkkkkkwkkkkkkk",
+            "krkrrkkrkkykkkkkkkkkkkkkkkkkgkkkkkkkkkkkkkkkkkwkkkkkkk",
+            "krkrrrkrkkykkkkkkkkkkkkkkkkkgkkkkkkkkbkkkkkkkkwkkkkkkk",
+            "rrkrrrkrkkykkkkkkkkkkkkkkkkggkkkkkkkkbkkkkkkkkwwkkkkkk",
+            "rrrrrrkrkkykkkkkkkkkkkkkkkkggkkkkkkkkbbkkkkkkwwwkkkkkk",
+            "rrrrrrrrkyykkkkkkkkkkkkkkkkgggkkkkkkkbbkkkkkkwwwkkkkkk",
+            "rrrrrrrrryyykkkkkkkkkkkkkkkgggkkkkkkbbbkkkkkkwwwkkkkkk",
+            "rrrrrrrrryyykkkkkkkkkkkkkkkgggggkkkkbbbkkkkkkwwwkwwkkk",
+            "rrrrrrrrryyykkkkkkkkkkkkkkkgggggkkkkbbbkbbkkkwwwwwwkkk",
+            "rrrrrrrrryyyyykkkkkkkkkkkkkggggggkkkbbbkbbkkkwwwwwwkkk",
+            "rrrrrrrrryyyyyykkkkkkkkkkkkggggggkkkbbbbbbkkkwwwwwwkkk",
+            "rrrrrrrrryyyyyykkkkkkkmkkmkggggggkkkbbbbbbkkkwwwwwwkwk",
+            "rrrrrrrrryyyyyykkkkkkmmkkmkggggggkgkbbbbbbkkkwwwwwwkwk",
+            "rrrrrrrrryyyyyykkkkkkmmmkmkggggggkgkbbbbbbkbkwwwwwwkwk",
+            "rrrrrrrrryyyyyykykkmkmmmkmkggggggkgkbbbbbbkbkwwwwwwkwk",
+            "rrrrrrrrryyyyyykykkmkmmmmmkggggggggkbbbbbbkbkwwwwwwkww",
+            "rrrrrrrrryyyyyykykkmkmmmmmmggggggggkbbbbbbkbbwwwwwwwww",
+            "rrrrrrrrryyyyyyyykmmkmmmmmmgggggggggbbbbbbkbbwwwwwwwww",
+            "rrrrrrrrryyyyyyyyymmmmmmmmmgggggggggbbbbbbbbbwwwwwwwww",
+        ]
 
     array_of_dict_solvers = [{} for i in range(len(stages))]
     for i_stage, stage in enumerate(stages):
-
         # Start with the empty set, in case this stage can be skipped
         dict_solver = {stage: np.array([], dtype=np.int16)}
 
         for i_mc in range(n_mc_cubes):
-
             cube.set_cube_state(stage)
             n_moves = int(np.ceil(10.0 * (i_mc + 1.0) / n_mc_cubes))
             mc_moves = cube.randomize(n_moves)

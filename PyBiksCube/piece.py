@@ -8,6 +8,7 @@ from mpl_toolkits.mplot3d import art3d
 
 from PyBiksCube.utilities import side_type_converter
 
+
 class Piece:
     """
     Representation of a one piece of a Rubik's Cube. Includes:
@@ -27,31 +28,28 @@ class Piece:
     """
 
     def __init__(self):
-        """ The constructor for the Piece class. """        
+        """The constructor for the Piece class."""
 
         self.colors = np.array(["k", "k", "k", "k", "k", "k"])
 
         # The sides that are rotated when a turn is initiated on given face key
-        self.turn_sequences = {"F": ["U", "R", "D", "L"],
-                               "B": ["U", "L", "D", "R"],
-                               "R": ["U", "B", "D", "F"],
-                               "L": ["U", "F", "D", "B"],
-                               "U": ["F", "L", "B", "R"],
-                               "D": ["F", "R", "B", "L"]}
+        self.turn_sequences = {
+            "F": ["U", "R", "D", "L"],
+            "B": ["U", "L", "D", "R"],
+            "R": ["U", "B", "D", "F"],
+            "L": ["U", "F", "D", "B"],
+            "U": ["F", "L", "B", "R"],
+            "D": ["F", "R", "B", "L"],
+        }
 
-        self.side_to_index_map = {"F": 0,
-                                  "B": 2,                                  
-                                  "R": 1,
-                                  "L": 3,
-                                  "U": 5,
-                                  "D": 4}
+        self.side_to_index_map = {"F": 0, "B": 2, "R": 1, "L": 3, "U": 5, "D": 4}
 
     def side_to_index(self, side):
-        """ 
+        """
         Converts the side name to the index in the colors array.
         Function sanitizes the input and then uses the side_to_index_map dict.
         Can be used with a list for faster indexing.
-        
+
         Parameters
         ----------
         side : str or list of strs
@@ -77,7 +75,7 @@ class Piece:
         Parameters
         ----------
         turn_axis : str
-            Name of face to turn around. 
+            Name of face to turn around.
         number_of_turns : int
             Integer of number of turns to turn about turn_axis.
             May be negative for opposite direction turn.
@@ -85,7 +83,9 @@ class Piece:
         converted_turn_axis = side_type_converter(turn_axis)
         current_turn = self.turn_sequences[converted_turn_axis]
         sides_to_roll = self.side_to_index(current_turn)
-        self.colors[sides_to_roll] = self.colors[np.roll(sides_to_roll, number_of_turns)]
+        self.colors[sides_to_roll] = self.colors[
+            np.roll(sides_to_roll, number_of_turns)
+        ]
 
     def get_color(self, side):
         """

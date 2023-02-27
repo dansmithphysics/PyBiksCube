@@ -6,7 +6,7 @@ from PyBiksCube import Cube
 def create_lookup_table(output_file_name):
     """
     Creates the lookup tables for moves in a lookup table based Cube class.
-    
+
     The lookup table is a map of indices used in rotations from before to after the move.
 
     Works by:
@@ -23,10 +23,24 @@ def create_lookup_table(output_file_name):
         Name of output csv file.
     """
 
-    fundamental_moves = ["U", "F", "D", "L", "R", "B", "U'", "F'", "D'", "L'", "R'", "B'"]
+    fundamental_moves = [
+        "U",
+        "F",
+        "D",
+        "L",
+        "R",
+        "B",
+        "U'",
+        "F'",
+        "D'",
+        "L'",
+        "R'",
+        "B'",
+    ]
 
-    move_array = np.array([calc_lookup_table_for_move(move) for move in fundamental_moves],
-                          dtype=np.int16)
+    move_array = np.array(
+        [calc_lookup_table_for_move(move) for move in fundamental_moves], dtype=np.int16
+    )
 
     np.savetxt(output_file_name, move_array, fmt="%i", delimiter=",")
 
@@ -39,7 +53,7 @@ def calc_lookup_table_for_move(move):
     ----------
     move : str
         Move to perform on the cube, in UFDLRB notation.
-    
+
     Returns
     -------
     cur_map : array of ints
@@ -53,7 +67,8 @@ def calc_lookup_table_for_move(move):
     cube.move_decoder(move)
     final_cube_state = list(cube.get_cube_state())
 
-    cur_map = np.array([initial_cube_state.index(state) for state in final_cube_state],
-                       dtype=np.int16)
+    cur_map = np.array(
+        [initial_cube_state.index(state) for state in final_cube_state], dtype=np.int16
+    )
 
     return cur_map
