@@ -19,6 +19,7 @@ saved as text files.
 
 Includes a PyTest suit, in the tests directory.
 """
+__version__ = "0.1.0"
 from .piece import Piece
 from .cube import Cube
 from .cube_lookup import CubeLookup
